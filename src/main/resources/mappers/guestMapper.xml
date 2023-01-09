@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 문법(인터넷에서 긁어와서 수정함) -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javawspring.dao.GuestDAO"> <!-- 여기다가 mybatis로 sql쓴걸 주입시키겠다 -->
+
+	<select id="getGuestList" resultType="com.spring.javawspring.vo.GuestVO">
+		select * from guest2 order by idx desc limit #{startIndexNo},#{pageSize};
+	</select>
+	
+  <select id="totRecCnt" resultType="int">
+  	select count(*) from guest2;
+  </select>
+  
+	
+	<insert id="setGuestInput">
+		insert into guest2 values (default,#{vo.name},#{vo.email},#{vo.homePage},default,#{vo.hostIp},#{vo.content});
+	</insert>
+	
+	<!-- id에 dao꺼 복붙 -->
+	<delete id="setGuestDelete"> 
+		delete from guest2 where idx = #{idx};
+	</delete>
+	
+</mapper> 

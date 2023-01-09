@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 문법(인터넷에서 긁어와서 수정함) -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javawspring.dao.MemberDAO"> <!-- 여기다가 mybatis로 sql쓴걸 주입시키겠다 -->
+
+	<select id="getMemberIdCheck" resultType="com.spring.javawspring.vo.MemberVO">
+		select * from member2 where mid = #{mid};
+	</select>
+
+	<select id="getMemberNickNameCheck" resultType="com.spring.javawspring.vo.MemberVO">
+		select * from member2 where nickName = #{nickName};
+	</select>
+
+	<select id="totRecCnt" resultType="int">
+		select count(*) from member2; 
+	</select>
+	
+
+	<select id="getMemberList" resultType="com.spring.javawspring.vo.MemberVO">
+		select * from member2 order by idx desc limit #{startIndexNo},#{pageSize}
+	</select>
+	
+	
+	<select id="totTermRecCnt" resultType="int">
+<!-- 		
+		<if test="mid == ''"> id가안넘어왔을땐 공백처리했으니까, 공백으로왔으면 조건검색이아니라 전체라는뜻
+			select count(*) from member2;
+		</if>  c:if는 core라이브러리고 c:가없으면 이렇게쓰면됨
+		<if test="mid != ''">  배타적으로 써주면됨, 공백이 아닐때니까 조건검색처리했을때
+			select count(*) from member2 where mid like concat('%',#{mid},'%');
+		</if>  -->
+		<!-- 아래 방식처럼해도됨 -->
+		select count(*) from member2 <if test="mid != ''"> where mid like concat('%',#{mid},'%') </if>;
+  </select>
+  
+  <select id="getTermMemberList" resultType="com.spring.javawspring.vo.MemberVO">
+    <!--  
+  	<if test="mid == ''">
+  		select * from member2 order by idx desc limit #{startIndexNo},#{pageSize};
+  	</if>
+  	<if test="mid != ''">
+  		select * from member2 where mid like concat('%',#{mid},'%') order by idx desc limit #{startIndexNo},#{pageSize};
+  	</if>
+  	-->
+ 		select * from member2 <if test="mid != ''"> where mid like concat('%',#{mid},'%') </if> order by idx desc limit #{startIndexNo},#{pageSize};
+  </select>
+	
+	
+<!-- 	<update id="setTodayCntUpdate">
+		update member2 set todayCnt = 0 where mid = #{mid};
+	</update> -->
+	
+	<!-- 방문카운트,포인트,마지막날짜 -->
+	<update id="setMemTotalUpdate">
+		update member2 set lastDate=now(), todayCnt=#{todayCnt}, visitCnt=visitCnt+1, point=#{nowTodayPoint} where mid = #{mid};
+	</update>
+
+
+
+	<insert id="setMemberJoinOk">
+		insert into member2 values (default,#{vo.mid},#{vo.pwd},#{vo.nickName},#{vo.name},#{vo.gender},#{vo.birthday},#{vo.tel},#{vo.address},#{vo.email},#{vo.homePage},#{vo.job},#{vo.hobby},#{vo.photo},#{vo.content},#{vo.userInfor},default,default,default,default,default,default,default);
+	</insert>
+	
+</mapper>
