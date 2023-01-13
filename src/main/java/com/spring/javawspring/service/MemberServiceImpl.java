@@ -1,12 +1,22 @@
 package com.spring.javawspring.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.spring.javawspring.common.JavawspringProvide;
 import com.spring.javawspring.dao.MemberDAO;
 import com.spring.javawspring.vo.MemberVO;
 
@@ -27,8 +37,28 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int setMemberJoinOk(MemberVO vo) {
-		return memberDAO.setMemberJoinOk(vo);
+	public int setMemberJoinOk(MultipartFile fName, MemberVO vo) {
+		//업로드된 사진을 서버 파일시스템에 저장시켜준다.
+		int res = 0;
+		try {  //예외처리왜해주지???????
+			String oFileName =  fName.getOriginalFilename(); //원래 파일이름(올렸을때 파일이름)
+			if(oFileName.equals("")) { //넘어온 oFileName이 공백일경우 no image를 넣어줌
+				vo.setPhoto("noimage.jpg");
+			}
+			else {
+				UUID uid = UUID.randomUUID();
+				String saveFileName = uid + "_" + oFileName; //저장되는 파일이름 (_구분자로 구분함)
+
+				JavawspringProvide ps = new JavawspringProvide(); //프로젝트에선 이렇게하지말고 자주쓰는것들 따로 빼놓기??
+				ps.writeFile(fName, saveFileName,"member"); //아래서 만듦
+				vo.setPhoto(saveFileName);
+			}
+			memberDAO.setMemberJoinOk(vo);
+			res = 1; //정상적이면 res 1
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 	@Override
@@ -58,14 +88,14 @@ public class MemberServiceImpl implements MemberService {
 			
 	}
 
-	@Override
-	public int totRecCnt() {
-		return memberDAO.totRecCnt();
-	}
+//	@Override
+//	public int totRecCnt() {
+//		return memberDAO.totRecCnt();
+//	}
 
 	@Override
-	public ArrayList<MemberVO> getMemberList(int startIndexNo, int pageSize) {
-		return memberDAO.getMemberList(startIndexNo,pageSize);
+	public List<MemberVO> getMemberList(int startIndexNo, int pageSize ,String mid) {
+		return memberDAO.getMemberList(startIndexNo, pageSize , mid);
 	}
 
 	@Override
@@ -77,4 +107,57 @@ public class MemberServiceImpl implements MemberService {
 	public ArrayList<MemberVO> getTermMemberList(int startIndexNo, int pageSize, String mid) {
 		return memberDAO.getTermMemberList(startIndexNo,pageSize,mid);
 	}
+
+	@Override
+	public void setMemberPwdUpdate(String mid, String pwd) {
+		memberDAO.setMemberPwdUpdate(mid,pwd);
+	}
+
+	@Override
+	public String getMemberIdSearch(String name, String tel) {
+		return memberDAO.getMemberIdSearch(name,tel);
+	}
+
+	@Override
+	public void setMemberDeleteOk(String mid) {
+		memberDAO.setMemberDeleteOk(mid);
+	}
+
+	@Override
+	public int setMemberUpdateOk(MultipartFile fName, MemberVO vo) {
+		int res = 0;
+		try {
+			String oFileName = fName.getOriginalFilename();
+			if(!oFileName.equals("")) {
+				UUID uid = UUID.randomUUID();
+				String saveFileName = uid + "_" + oFileName;
+				JavawspringProvide ps = new JavawspringProvide();
+				ps.writeFile(fName, saveFileName,"member");
+				
+				// 기존에 존재하는 파일 삭제하기
+				if(!vo.getPhoto().equals("noimage.jpg")) {
+					HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+					String realPath = "";
+					realPath = request.getSession().getServletContext().getRealPath("/resources/member/");
+					File file = new File(realPath + vo.getPhoto());
+					file.delete();
+				}
+				
+				// 기존파일을 지우고, 새로 업로드된 파일명을 set시킨다.
+				vo.setPhoto(saveFileName);
+			}
+			memberDAO.setMemberUpdateOk(vo);
+			res = 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@Override
+	public int getMonthNewUser() {
+		return memberDAO.getMonthNewUser();
+	}
+
+
 }

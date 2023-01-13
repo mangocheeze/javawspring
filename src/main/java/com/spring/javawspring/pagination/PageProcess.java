@@ -3,6 +3,7 @@ package com.spring.javawspring.pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.spring.javawspring.dao.BoardDAO;
 import com.spring.javawspring.dao.GuestDAO;
 import com.spring.javawspring.dao.MemberDAO;
 
@@ -16,17 +17,22 @@ public class PageProcess {
 	@Autowired
 	MemberDAO memberDAO;
 
+	@Autowired
+	BoardDAO boardDAO;
 	
-	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) { //매개변수 받는건 마음대로줘도됨
+	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) { //section은 board,member등등 ,매개변수 받는건 마음대로줘도됨, 아이디개별검색을하게되면 searchString자리에 아이디가 들어옴,part는 나중에써먹으려고써놓음
 		PageVO pageVO = new PageVO();
 		
 		int totRecCnt = 0;
 		
-		if(section.equals("member")) {
-			totRecCnt = memberDAO.totRecCnt();
+		if(section.equals("member")) { //section이 member일때 
+			totRecCnt = memberDAO.totRecCnt(searchString); //전체자료건수를 가져옴
 		}
 		else if(section.equals("guest")) { //이렇게써주면 guest에도 페이지네이션 가져다 쓰는거임
 			totRecCnt = guestDAO.totRecCnt();
+		}
+		else if(section.equals("board")) { //위에 @Autowired 걸기
+			totRecCnt = boardDAO.totRecCnt(part, searchString);
 		}
 		
 		

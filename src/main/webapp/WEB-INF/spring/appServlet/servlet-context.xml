@@ -18,11 +18,14 @@
 	<resources mapping="/font/**" location="/resources/font/" />
 	<resources mapping="/css/**" location="/resources/css/" />
 	<resources mapping="/images/**" location="/resources/images/" />
-	<resources mapping="/board/**" location="/resources/board/" />
+	<resources mapping="/board/**" location="/resources/data/board/" />
 	<resources mapping="/pds/**" location="/resources/pds/" />
 	<resources mapping="/member/**" location="/resources/member/" />
+	<resources mapping="/ckeditor/**" location="/resources/ckeditor/" />
+	<resources mapping="/data/**" location="/resources/data/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- 여기서 선언을 해놔서 컨트롤러에서 앞뒤로 안써줘도됨 -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
@@ -32,6 +35,13 @@
 	
 	<!-- BCryptPasswordEncoder 객체를 위한 Bean 등록 -->
 	<beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
+	<!-- 파일업로드에 필요한 라이브러리를 Bean으로 등록(업로드 최대용량 20MByte) -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="20971520" /> <!-- 1024*1024*20 (20MByte)를 계산해서 넣음 -->
+		<beans:property name="defaultEncoding" value="utf-8" />
+	</beans:bean>
+	
 	
 	<!-- Interceptor 설정 -->
 	<beans:bean id="level0Interceptor" class="com.spring.javawspring.interceptor.Level0Interceptor" />  <!-- adminIntercepter등록 -->
@@ -44,15 +54,21 @@
 		</interceptor>
 		<interceptor>
 			<mapping path="/member/**"/> <!-- member에 들어온건 모조리 다  -->
+			<mapping path="/board/boardList"/> 
 			<exclude-mapping path="/member/memberLogin"/> <!-- 회원뿐아니라 모두가 들어올수있는것들 배제처리해주기 -->
 			<exclude-mapping path="/member/memberLogout"/>
 			<exclude-mapping path="/member/memberJoin"/>
 			<exclude-mapping path="/member/memberIdCheck"/>
 			<exclude-mapping path="/member/memberNickNameCheck"/>
+			<exclude-mapping path="/member/memberPwdSearch"/>
+			<exclude-mapping path="/member/memberIdSearch"/>
 			<beans:ref bean="level4Interceptor" /> <!-- 여기로 가게 하겠다 -->
 		</interceptor>
 		<interceptor>
-			<mapping path="/board/boardList"/> 
+			<mapping path="/study/**"/> 
+			<mapping path="/board/**"/>  <!-- board는 level3을 기준으로 하되,boardList는 level4Interceptor로 가게함 -->
+			<mapping path="/member/memberList"/> 
+			<exclude-mapping path="/board/boardList"/>
 			<beans:ref bean="level3Interceptor" /> 
 		</interceptor>
 	</interceptors>

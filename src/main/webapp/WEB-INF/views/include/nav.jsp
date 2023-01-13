@@ -20,6 +20,7 @@
 	        <a href="${ctp}/study/ajax/ajaxMenu" class="w3-bar-item w3-button">AJax연습</a>
 	        <a href="${ctp}/study/mail/mailForm" class="w3-bar-item w3-button">메일연습</a> <!-- 메일인증 -->
 	        <a href="${ctp}/study/uuid/uuidForm" class="w3-bar-item w3-button">UUID</a> 
+	        <a href="${ctp}/study/fileUpload/fileUploadForm" class="w3-bar-item w3-button">파일업로드연습</a> 
 	        <a href="#" class="w3-bar-item w3-button">인터넷달력</a>
 	      </div>
 	    </div>
@@ -39,9 +40,10 @@
 	        <a href="${ctp}/member/memberMain" class="w3-bar-item w3-button">회원메인화면</a>
 	        <a href="#" class="w3-bar-item w3-button">웹메세지</a>
 	        <a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a>
-	        <a href="#" class="w3-bar-item w3-button">정보수정</a>
-	        <a href="#" class="w3-bar-item w3-button">회원탈퇴</a>
-	        <a href="#" class="w3-bar-item w3-button">관리자메뉴</a>
+	        <a href="${ctp}/member/memberPwdUpdate?flag=pwdCheck" class="w3-bar-item w3-button">회원정보수정</a>
+	        <a href="${ctp}/member/memberPwdUpdate" class="w3-bar-item w3-button">비밀번호수정</a>
+	        <a href="javascript:memberDelete()" class="w3-bar-item w3-button">회원탈퇴</a>
+	        <a href="${ctp}/admin/adminMain" class="w3-bar-item w3-button">관리자메뉴</a>
 	      </div>
 	    </div>
     </c:if>
@@ -62,3 +64,12 @@
   <a href="#contact" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">CONTACT</a>
   <a href="#" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">MERCH</a>
 </div>
+<script>
+	function memberDelete() {
+		let ans = confirm("탈퇴하시겠습니까?");
+		if(ans) {
+			ans = confirm("탈퇴하시면 1개월간 같은 아이디로 재가입하실수 없습니다.\n그래도 탈퇴하시겠습니까?");
+			if(ans) location.href = "${ctp}/member/memberDelete";
+		}
+	}
+</script>

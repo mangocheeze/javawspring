@@ -12,12 +12,12 @@
 	</select>
 
 	<select id="totRecCnt" resultType="int">
-		select count(*) from member2; 
+		select count(*) from member2<if test="mid != ''"> where mid like concat('%',#{mid},'%') </if>; 
 	</select>
 	
 
 	<select id="getMemberList" resultType="com.spring.javawspring.vo.MemberVO">
-		select * from member2 order by idx desc limit #{startIndexNo},#{pageSize}
+		select * from member2 <if test="mid != ''"> where mid like concat('%',#{mid},'%') </if> order by idx desc limit #{startIndexNo},#{pageSize};
 	</select>
 	
 	
@@ -45,6 +45,15 @@
  		select * from member2 <if test="mid != ''"> where mid like concat('%',#{mid},'%') </if> order by idx desc limit #{startIndexNo},#{pageSize};
   </select>
 	
+	<select id="getMemberIdSearch" resultType="String">
+		select mid from member2 where name =#{name} and tel = #{tel};
+	</select>
+	
+	<!-- 한달신규가입자수 -->
+	<select id="getMonthNewUser" resultType="int">
+		select count(*) as monthJoin from member2 where startDate between date_add(now(), interval -1 month) and now();
+	</select><!-- 최초가입일부터 오늘날짜에서 한달전 날짜와 시간을 가져옴 -->
+	<!-- A between B: A부터 B에 해당하는 행을 출력 / date_add(now(), interval -1 month): 오늘날짜에서 한달전날짜와 시간 -->
 	
 <!-- 	<update id="setTodayCntUpdate">
 		update member2 set todayCnt = 0 where mid = #{mid};
@@ -55,10 +64,23 @@
 		update member2 set lastDate=now(), todayCnt=#{todayCnt}, visitCnt=visitCnt+1, point=#{nowTodayPoint} where mid = #{mid};
 	</update>
 
-
+	<update id="setMemberPwdUpdate">
+		update member2 set pwd =#{pwd} where mid = #{mid};
+	</update>
+	
+	<!-- 회원탈퇴신청 -->
+	<update id="setMemberDeleteOk">
+		update member2 set userDel = 'OK' where mid = #{mid};
+	</update>
+	
+	<!-- 회원정보수정 -->
+	 <update id="setMemberUpdateOk">
+  	update member2 set nickName=#{vo.nickName},name=#{vo.name},gender=#{vo.gender},birthday=#{vo.birthday},tel=#{vo.tel},address=#{vo.address},email=#{vo.email},homePage=#{vo.homePage},job=#{vo.job},hobby=#{vo.hobby},photo=#{vo.photo},content=#{vo.content} where mid=#{vo.mid};
+  </update>
 
 	<insert id="setMemberJoinOk">
 		insert into member2 values (default,#{vo.mid},#{vo.pwd},#{vo.nickName},#{vo.name},#{vo.gender},#{vo.birthday},#{vo.tel},#{vo.address},#{vo.email},#{vo.homePage},#{vo.job},#{vo.hobby},#{vo.photo},#{vo.content},#{vo.userInfor},default,default,default,default,default,default,default);
 	</insert>
+
 	
 </mapper>
