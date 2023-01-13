@@ -35,6 +35,7 @@ public class BoardController {
 	@Autowired
 	MemberService memberService;
 	
+	//게시판 리스트 
 	@RequestMapping(value = "/boardList", method = RequestMethod.GET)
 	public String boardListGet(Model model,
 			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,
@@ -306,6 +307,25 @@ public class BoardController {
 		boardService.setBoardReplyDeleteOk(idx);
 		
 		return "";
+	}
+	
+	
+	//게시글 관리자 선택/전체선택 삭제하기
+	@RequestMapping(value = "/boardAdminDelete", method = RequestMethod.POST)
+	public String boardAdminDeletePost(String delItems) {
+		int res = 0;
+		delItems = delItems.substring(0, delItems.length()-1); //마지막껀 /빼려고해줌 (굳이 안해도됨)
+		System.out.println("delItems" + delItems); //한번찍어보기
+		
+		String[] delItemsArr = delItems.split("/");// 12/15/17 이런식으로 들어와있는데 /기준으로 잘라서 배열 delItemsArr변수에 넣어줌
+		System.out.println("delItemsArr[0]" +delItemsArr[0]); //0번방에 뭐들어왔는지 찍어봄
+		
+		for(int i=0; i<delItemsArr.length; i++) { //배열의 길이만큼 반복
+			int checkIdx = Integer.parseInt((String)delItemsArr[i]); //배열은 무조건 String타입인데 나중에 idx로 비교해서 삭제해줘야하니 int타입으로 형변환해주기
+			res = boardService.setBoardAdminDelete(checkIdx); //idx가 int타입이니까 int타입 res로 받기
+		}
+		
+		return res + ""; //다시 res를 문자타입으로 형변환해줌
 	}
 	
 	

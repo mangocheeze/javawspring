@@ -57,4 +57,6 @@ public interface BoardService {
 	public void setBoardReplyInput2(BoardReplyVO replyVo);
 
 	public int getNewContent();
+
+	public int setBoardAdminDelete(int checkIdx);
 }

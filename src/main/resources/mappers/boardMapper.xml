@@ -114,6 +114,11 @@
   <delete id="setBoardReplyDeleteOk">
     delete from boardReply2 where idx = #{idx};
   </delete>
+
+	<!-- 댓글삭제하기  -->
+  <delete id="setBoardAdminDelete">
+    delete from board2 where idx = #{idx};
+  </delete>
   
   
 	

@@ -278,6 +278,12 @@ public class BoardServiceImpl implements BoardService {
 	public int getNewContent() {
 		return boardDAO.getNewContent();
 	}
+
+
+	@Override
+	public int setBoardAdminDelete(int checkIdx) {
+		return boardDAO.setBoardAdminDelete(checkIdx);
+	}
 	
 	
 }

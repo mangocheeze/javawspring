@@ -81,14 +81,14 @@
 		  <c:forEach var="file" items="${files}" varStatus="st">
 		    <tr>
 		      <td>
-		        <c:if test="${file != 'board'}">
+		        <c:if test="${file != 'board'}"> <!-- 파일이 폴더명이 아닐때만 (ckeditor폴더 안에있는 board폴더) -->
 		        	<input type="checkbox" name="chk" class="chk" value="${file}"/>
 		        </c:if>
 		      </td>
 		      <td>${st.count}</td>
 		      <td>${file}</td>
 		      <td>
-		        <c:if test="${file == 'board'}">폴더명입니다.</c:if>
+		        <c:if test="${file == 'board'}">폴더명입니다.</c:if> <!-- 폴더일경우 사진대신 글자띄우기 -->
 		        <c:if test="${file != 'board'}">
 		        	<img src="${ctp}/data/ckeditor/${file}" width="150px"/>
 		        </c:if>

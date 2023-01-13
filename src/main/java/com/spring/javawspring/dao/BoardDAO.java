@@ -56,4 +56,6 @@ public interface BoardDAO {
 
 	public int getNewContent();
 
+	public int setBoardAdminDelete(@Param("checkIdx") int checkIdx);
+
 }

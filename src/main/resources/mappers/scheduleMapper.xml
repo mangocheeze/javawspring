@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 문법(인터넷에서 긁어와서 수정함) -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javawspring.dao.ScheduleDAO"> <!-- 여기다가 mybatis로 sql쓴걸 주입시키겠다 -->
+	<!-- 달력에 스케줄띄우기 -->
+	<select id="getScheduleList" resultType="com.spring.javawspring.vo.ScheduleVO">
+		select sDate,part from schedule2 where mid=#{mid} and date_format(sDate,'%Y-%m') = #{ym} order by sDate,part;
+	</select>
+
+	<!-- 달력에서 스케줄클릭시 들어가서 스케줄들 띄우기 -->
+	<select id="getScheduleMenu" resultType="com.spring.javawspring.vo.ScheduleVO">
+		select * from schedule2 where mid=#{mid} and date_format(sDate,'%Y-%m-%d') = #{ymd};
+	</select>
+
+	<!-- 스케줄등록  -->
+	<insert id="getScheduleInputOk">
+		insert into schedule2 values (default, #{vo.mid}, #{vo.ymd}, #{vo.part}, #{vo.content});
+	</insert>
+	
+	<!-- 스케줄 수정 -->	
+	<update id="getScheduleUpdateOk">
+		update schedule2 set part = #{vo.part}, content = #{vo.content} where idx = #{vo.idx};
+	</update>
+	
+	<!-- 스케줄 삭제 -->
+	<delete id="getScheduleDeleteOk">
+		delete from schedule2 where idx = #{idx};
+	</delete>
+</mapper>
