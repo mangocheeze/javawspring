@@ -8,4 +8,41 @@
   <select id="getGuestNames" resultType="com.spring.javawspring.vo.GuestVO">
   	select * from guest2 where name like concat('%',#{name},'%');
   </select>
+  
+  <!-- 영화예매 QR 정보 조회 -->
+  <select id="getQrSearch" resultType="com.spring.javawspring.vo.QrCodeVO">
+  	select * from qrCode where idx = #{qrIdx};
+  </select>
+  
+  <!-- 카카오맵 -기존DB에 주소가 있는지 검색-->
+  <select id="getKakaoAddressName" resultType="com.spring.javawspring.vo.KakaoAddressVO">
+  	select * from kakaoAddress where address = #{address};
+  </select>
+  
+  <!-- 카카오맵 -주소록 가져오기 -->
+  <select id="getAddressNameList" resultType="com.spring.javawspring.vo.KakaoAddressVO">
+  	select * from kakaoAddress order by address;
+  </select>
+
+	<!-- 카카오맵 - Ex5 -->
+  <select id="getKakaoList" resultType="com.spring.javawspring.vo.KakaoAddressVO">
+  	select * from kakaoAddress;
+  </select>
+
+  <!-- 영화예매 QR 정보 등록 -->
+  <insert id="setQrInput">
+  	insert into qrCode values (#{vo.idx}, #{vo.qrCode}, #{vo.bigo});
+  </insert>
+
+	<!-- 카카오맵 - 기존DB에 주소 저장시킴 -->
+  <insert id="setKakaoAddressName">
+  	insert into kakaoAddress values (#{vo.address}, #{vo.latitude}, #{vo.longitude});
+  </insert>
+  
+  
+  <!-- 선택된 지역을 카카오 DB에서 삭제하기 -->
+  <delete id="setKakaoAddressDelete">
+  	delete from kakaoAddress where address = #{address};
+  </delete>
+
 </mapper>

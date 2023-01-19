@@ -1,11 +1,17 @@
 package com.spring.javawspring.service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +20,17 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.spring.javawspring.common.DistanceCal;
 import com.spring.javawspring.dao.StudyDAO;
 import com.spring.javawspring.vo.GuestVO;
+import com.spring.javawspring.vo.KakaoAddressVO;
+import com.spring.javawspring.vo.QrCodeVO;
 
 @Service
 public class StudyServiceImpl implements StudyService {
@@ -252,5 +267,142 @@ public class StudyServiceImpl implements StudyService {
 		// 현재 달력의 '앞/뒤' 빈공간을 채울, 이전달의 뒷부분과 다음달의 앞부분을 보여주기위해 넘겨주는 변수
 		request.setAttribute("preLastDay", preLastDay);				// 이전달의 마지막일자를 기억하고 있는 변수
 		request.setAttribute("nextStartWeek", nextStartWeek);	// 다음달의 1일에 해당하는 요일을 기억하고있는 변수
+	}
+
+	/*
+	//QR코드 만들기
+	@Override
+	public String qrCreate(String mid, String moveFlag, String realPath) {
+		String qrCodeName = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss"); //인터넷에선 1초도긴데 그 사이에 같은게 들어올수도있으니까 uuid로 랜덤이름만들기
+		UUID uid = UUID.randomUUID(); //32글자가 만들어지는데 그중 앞에 2개만꺼내쓸거임
+		String strUid = uid.toString().substring(0,2);
+		
+		qrCodeName = sdf.format(new Date()) + "_" + mid + "_" + moveFlag + "_" + strUid; //여기서 바로 날짜 생성 (yyyyMMddhhmmss형식으로만들어짐)
+		
+		//생성하기위한 예외처리
+		try {
+			File file = new File(realPath); //껍데기 먼저만들기 , realPath는 폴더임
+			if(!file.exists()) file.mkdirs();//exists() : 있냐없냐(존재하냐) ,true면 존재한다 ,.mkdirs() :명령어
+			
+			String codeFlag = new String(moveFlag.getBytes("UTF-8"), "ISO-8859-1"); 
+			
+			//qr코드 만들기
+			int qrCodecolor = 0xFF000000;//QR코드 전경색(글자색-검정색) 16진수에 문자코드색깔을 넣겠다, 글자색깔
+			int qrCodeBackcolor = 0xFFFFFFFF; //배경색깔 (흰색)
+			
+			QRCodeWriter qrCodeWriter = new QRCodeWriter(); //QR코드 객체생성
+			//BitMatrix bitMatrix = qrCodeWriter.encode(codeFlag, BarcodeFormat.QR_CODE, qrCodecolor, qrCodeBackcolor);
+			BitMatrix bitMatrix = qrCodeWriter.encode(codeFlag, BarcodeFormat.QR_CODE, 200, 200);
+			
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrCodecolor, qrCodeBackcolor);
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrCodeName + ".png"));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return qrCodeName;
+	}
+	*/
+	
+	//QR코드 만들기
+	@Override
+	public String qrCreate(String mid, String moveFlag, String realPath) {
+		String qrCodeName = "";
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss"); //인터넷에선 1초도긴데 그 사이에 같은게 들어올수도있으니까 uuid로 랜덤이름만들기
+		UUID uid = UUID.randomUUID(); //32글자가 만들어지는데 그중 앞에 2개만꺼내쓸거임
+		//String strUid = uid.toString().substring(0,2);
+		String strUid = uid.toString().substring(0,8);
+		
+		qrCodeName = sdf.format(new Date()) + "_" + mid + "_" + moveFlag + "_" + strUid; //QR코드파일이름. 여기서 바로 날짜 생성 (yyyyMMddhhmmss형식으로만들어짐)
+		
+		//생성하기위한 예외처리
+		try {
+			File file = new File(realPath); //껍데기 먼저만들기 , realPath는 폴더임
+			if(!file.exists()) file.mkdirs(); //exists() : 있냐없냐(존재하냐) ,true면 존재한다 ,.mkdirs() :명령어
+			
+			String codeFlag = new String(moveFlag.getBytes("UTF-8"), "ISO-8859-1")+ "_" + strUid; //핸드폰으로 QR코드찍었을때 뜨는이름
+			
+			//qr코드 만들기
+			int qrCodecolor = 0xFF000000;//QR코드 전경색(글자색-검정색) 16진수에 문자코드색깔을 넣겠다, 글자색깔
+			int qrCodeBackcolor = 0xFFFFFFFF; //배경색깔 (흰색)
+			
+			QRCodeWriter qrCodeWriter = new QRCodeWriter(); //QR코드 객체생성
+			//BitMatrix bitMatrix = qrCodeWriter.encode(codeFlag, BarcodeFormat.QR_CODE, qrCodecolor, qrCodeBackcolor);
+			BitMatrix bitMatrix = qrCodeWriter.encode(codeFlag, BarcodeFormat.QR_CODE, 200, 200); //codeFlag로 QR코드모양을 만듦
+			
+			//전경색(글자색) , 배경색 설정
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrCodecolor, qrCodeBackcolor); //생성하면서 전경색(글자색)과 배경색을 같이넣겠다
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig); //설계된것 과 색상을 집어넣음
+			
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrCodeName + ".png")); //변한된 이미지 객체는 write메소드에 의해서 지정된 형식의 이미지파일로 출력된다
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		
+		return qrCodeName;
+	}
+
+	//등록
+	@Override
+	public void setQrInput(QrCodeVO vo) {
+		studyDAO.setQrInput(vo);
+	}
+
+	//조회
+	@Override
+	public QrCodeVO getQrSearch(String qrIdx) {
+		return studyDAO.getQrSearch(qrIdx);
+	}
+
+	//카카오맵
+	@Override
+	public KakaoAddressVO getKakaoAddressName(String address) {
+		return studyDAO.getKakaoAddressName(address);
+	}
+
+	@Override
+	public void setKakaoAddressName(KakaoAddressVO vo) {
+		studyDAO.setKakaoAddressName(vo);
+	}
+
+	@Override
+	public List<KakaoAddressVO> getAddressNameList() {
+		return studyDAO.getAddressNameList();
+	}
+
+	@Override
+	public void setKakaoAddressDelete(String address) {
+		studyDAO.setKakaoAddressDelete(address);
+	}
+
+	@Override
+	public ArrayList<KakaoAddressVO> getDistanceList() {
+		
+		double centerLat=36.62935542331672;
+		double centerLongi=127.45760875128917;
+		
+		ArrayList<KakaoAddressVO> dbVOS=studyDAO.getKakaoList(); //기존 DB에 있던자료
+		
+		ArrayList<KakaoAddressVO> vos=new ArrayList<KakaoAddressVO>(); //거리비교할자료
+		
+		for(int i=0; i<dbVOS.size(); i++) {
+			double distance=DistanceCal.distance(centerLat, centerLongi, dbVOS.get(i).getLatitude(), dbVOS.get(i).getLongitude(), "kilometer");
+			if(distance<15) { //15km안쪽
+				vos.add(dbVOS.get(i));
+			}
+		}
+		
+		return vos;
 	}
 }

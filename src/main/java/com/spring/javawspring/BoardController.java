@@ -311,6 +311,7 @@ public class BoardController {
 	
 	
 	//게시글 관리자 선택/전체선택 삭제하기
+	@ResponseBody
 	@RequestMapping(value = "/boardAdminDelete", method = RequestMethod.POST)
 	public String boardAdminDeletePost(String delItems) {
 		int res = 0;

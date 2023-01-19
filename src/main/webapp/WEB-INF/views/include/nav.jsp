@@ -27,8 +27,8 @@
 	    <div class="w3-dropdown-hover w3-hide-small">
 	      <button class="w3-padding-large w3-button" title="More">Study2 <i class="fa fa-caret-down"></i></button>   <!-- member라고안하고 닉네임보이게함(세션에 담을거니까 세션닉네임) -->  
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
-	        <a href="#" class="w3-bar-item w3-button">쿠폰(QR코드)</a>
-	        <a href="#" class="w3-bar-item w3-button">카카오맵</a>
+	        <a href="${ctp}/study/qrCode" class="w3-bar-item w3-button">쿠폰(QR코드)</a>
+	        <a href="${ctp}/study/kakaomap/kakaomap" class="w3-bar-item w3-button">카카오맵</a>
 	        <a href="#" class="w3-bar-item w3-button">구글차트</a>
 	        <a href="#" class="w3-bar-item w3-button">트랜잭션</a> <!-- 최종결제하는순간 롤백시킴? -->
 	        <a href="#" class="w3-bar-item w3-button">장바구니</a>
@@ -39,7 +39,7 @@
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
 	        <a href="${ctp}/member/memberMain" class="w3-bar-item w3-button">회원메인화면</a>
 	        <a href="${ctp}/schedule/schedule" class="w3-bar-item w3-button">일정관리</a>
-	        <a href="#" class="w3-bar-item w3-button">웹메세지</a>
+	        <a href="${ctp}/webMessage/webMessage" class="w3-bar-item w3-button">웹메세지</a>
 	        <a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a>
 	        <a href="${ctp}/member/memberPwdUpdate?flag=pwdCheck" class="w3-bar-item w3-button">회원정보수정</a>
 	        <a href="${ctp}/member/memberPwdUpdate" class="w3-bar-item w3-button">비밀번호수정</a>

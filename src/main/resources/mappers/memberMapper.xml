@@ -55,6 +55,11 @@
 	</select><!-- 최초가입일부터 오늘날짜에서 한달전 날짜와 시간을 가져옴 -->
 	<!-- A between B: A부터 B에 해당하는 행을 출력 / date_add(now(), interval -1 month): 오늘날짜에서 한달전날짜와 시간 -->
 	
+	<!-- 카카오 로그인(있으면 회원,아니면 비회원) -->
+	<select id="getMemberNickNameEmailCheck" resultType="com.spring.javawspring.vo.MemberVO">
+		select * from member2 where nickName = #{nickName} and email = #{email};  
+	</select>
+	
 <!-- 	<update id="setTodayCntUpdate">
 		update member2 set todayCnt = 0 where mid = #{mid};
 	</update> -->
@@ -78,9 +83,19 @@
   	update member2 set nickName=#{vo.nickName},name=#{vo.name},gender=#{vo.gender},birthday=#{vo.birthday},tel=#{vo.tel},address=#{vo.address},email=#{vo.email},homePage=#{vo.homePage},job=#{vo.job},hobby=#{vo.hobby},photo=#{vo.photo},content=#{vo.content} where mid=#{vo.mid};
   </update>
 
+	<!-- 카카오 로그인 탈퇴신청회원의 경우 userDel변경 -->
+	<update id="setMemberUserDelCheck">
+  	update member2 set userDel ='NO' where mid = #{mid};
+  </update>
+
 	<insert id="setMemberJoinOk">
 		insert into member2 values (default,#{vo.mid},#{vo.pwd},#{vo.nickName},#{vo.name},#{vo.gender},#{vo.birthday},#{vo.tel},#{vo.address},#{vo.email},#{vo.homePage},#{vo.job},#{vo.hobby},#{vo.photo},#{vo.content},#{vo.userInfor},default,default,default,default,default,default,default);
 	</insert>
 
+	<!-- 카카오 로그인 회원등록 -->
+	<!--닉네임 이메일빼곤 선택사항이라 없는데 아예 안넣으면 에러나니까 공백처리''나 기본값으로 줌,아이디비번은 컨트롤러에서 만들어줌 -->
+	<insert id="setKakaoMemberInputOk">
+		insert into member2 values (default,#{mid},#{pwd},#{nickName},'','남자',now(),'010- - ','/ / / /',#{email},'http://','기타','기타',default,'',default,default,default,default,default,default,default,default); 
+	</insert>
 	
 </mapper>

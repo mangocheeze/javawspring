@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.spring.javawspring.dao.BoardDAO;
 import com.spring.javawspring.dao.GuestDAO;
 import com.spring.javawspring.dao.MemberDAO;
+import com.spring.javawspring.dao.PdsDAO;
+import com.spring.javawspring.dao.WebMessageDAO;
 
 @Service //서비스객체라는뜻으로 걸어줌
 public class PageProcess {
@@ -20,6 +22,12 @@ public class PageProcess {
 	@Autowired
 	BoardDAO boardDAO;
 	
+	@Autowired
+	PdsDAO pdsDAO;
+	
+	@Autowired
+	WebMessageDAO webMessageDAO;
+	
 	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) { //section은 board,member등등 ,매개변수 받는건 마음대로줘도됨, 아이디개별검색을하게되면 searchString자리에 아이디가 들어옴,part는 나중에써먹으려고써놓음
 		PageVO pageVO = new PageVO();
 		
@@ -33,6 +41,14 @@ public class PageProcess {
 		}
 		else if(section.equals("board")) { //위에 @Autowired 걸기
 			totRecCnt = boardDAO.totRecCnt(part, searchString);
+		}
+		else if(section.equals("pds")) { //위에 @Autowired 걸기
+			totRecCnt = pdsDAO.totRecCnt(part);
+		}
+		else if(section.equals("webMessage")) { //위에 @Autowired 걸기
+			String mid = part; //WebMessageController에서 보낸 mid와 mSw를 여기서 mid는 part로받고 mSw는 SearchString으로 받았는데 헷갈리니까 변수바꾸기
+			int mSw = Integer.parseInt(searchString);
+			totRecCnt = webMessageDAO.totRecCnt(mid, mSw);
 		}
 		
 		

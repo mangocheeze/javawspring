@@ -45,6 +45,7 @@
 	
 	<!-- Interceptor 설정 -->
 	<beans:bean id="level0Interceptor" class="com.spring.javawspring.interceptor.Level0Interceptor" />  <!-- adminIntercepter등록 -->
+	<beans:bean id="level2Interceptor" class="com.spring.javawspring.interceptor.Level2Interceptor" /> 
 	<beans:bean id="level3Interceptor" class="com.spring.javawspring.interceptor.Level3Interceptor" /> 
 	<beans:bean id="level4Interceptor" class="com.spring.javawspring.interceptor.Level4Interceptor" /> 
 	<interceptors> <!-- 사용하기위해 그룹만듦 -->
@@ -54,6 +55,7 @@
 		</interceptor>
 		<interceptor>
 			<mapping path="/member/**"/> <!-- member에 들어온건 모조리 다  -->
+			<mapping path="/webMessage/**"/> <!-- level4로 가게함 -->
 			<mapping path="/board/boardList"/> 
 			<exclude-mapping path="/member/memberLogin"/> <!-- 회원뿐아니라 모두가 들어올수있는것들 배제처리해주기 -->
 			<exclude-mapping path="/member/memberLogout"/>
@@ -62,14 +64,25 @@
 			<exclude-mapping path="/member/memberNickNameCheck"/>
 			<exclude-mapping path="/member/memberPwdSearch"/>
 			<exclude-mapping path="/member/memberIdSearch"/>
-			<beans:ref bean="level4Interceptor" /> <!-- 여기로 가게 하겠다 -->
+			<exclude-mapping path="/member/memberKakaoLogin"/>
+			<beans:ref bean="level4Interceptor" /> <!-- 준회원.여기로 가게 하겠다 -->
 		</interceptor>
 		<interceptor>
 			<mapping path="/study/**"/> 
 			<mapping path="/board/**"/>  <!-- board는 level3을 기준으로 하되,boardList는 level4Interceptor로 가게함 -->
 			<mapping path="/member/memberList"/> 
+			<mapping path="/pds/pdsList"/> <!-- pds는 원래 level2Interceptor로 가야되는건데 여기에 써줌으로서 level3Interceptor로 감, 아래 pds에는 제외시켜줌 -->
+			<mapping path="/pds/pdsTotalDown"/> 
+			<mapping path="/pds/pdsDownAction"/> 
 			<exclude-mapping path="/board/boardList"/>
-			<beans:ref bean="level3Interceptor" /> 
+			<beans:ref bean="level3Interceptor" /> <!-- 정회원 -->
+		</interceptor>
+		<interceptor>
+			<mapping path="/pds/**"/> 
+			<exclude-mapping path="/pds/pdsList"/>
+			<exclude-mapping path="/pds/pdsTotalDown"/>
+			<exclude-mapping path="/pds/pdsDownAction"/>
+			<beans:ref bean="level2Interceptor" /> <!-- 우수회원 -->
 		</interceptor>
 	</interceptors>
 </beans:beans>
